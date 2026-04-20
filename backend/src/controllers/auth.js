@@ -1,9 +1,9 @@
-import bcrypt from "bcrypt";
-import { User } from "./models/User.js";
-import { signupSchema } from "../validators/auth.js";
-import user from "../models/user.js";
+const bcrypt = require("bcrypt");
+const User = require("../models/User");
+const { signupSchema, loginSchema } = require("../validation/auth");
+const jwt = require("jsonwebtoken")
 
-export const signup = async (req, res) => {
+const signup = async (req, res) => {
   try {
     const body = req.body;
 
@@ -17,7 +17,7 @@ export const signup = async (req, res) => {
       });
     }
 
-    const { fullName, email, password, country } = parsedBody.data;
+    const { name, email, password, country } = parsedBody.data;
 
     const userExist = await User.findOne({ email });
     if (userExist) {
@@ -27,12 +27,10 @@ export const signup = async (req, res) => {
       });
     }
 
-   
     const passwordHash = await bcrypt.hash(password, 10);
 
-    
     const newUser = new User({
-      fullName,
+      name,
       email,
       password: passwordHash,
       country,
@@ -44,7 +42,6 @@ export const signup = async (req, res) => {
       success: true,
       msg: "User registered successfully",
     });
-
   } catch (err) {
     console.error(err);
     return res.status(500).json({
@@ -55,13 +52,11 @@ export const signup = async (req, res) => {
 };
 
 //login
-export const login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const body = req.body;
 
-    
     const parsedBody = loginSchema.safeParse(body);
-
 
     if (!parsedBody.success) {
       return res.status(400).json({
@@ -90,7 +85,7 @@ export const login = async (req, res) => {
         success: false,
         msg: "Incorrect password",
       });
-    }   
+    }
     const payload = {
       id: user._id,
       email: user.email,
@@ -100,7 +95,9 @@ export const login = async (req, res) => {
       expiresIn: "7d",
     });
 
- res.cookie("token", token, { expires: new Date(Date.now() + 24 * 3600000) });
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 24 * 3600000),
+    });
 
     return res.status(200).json({
       success: true,
@@ -110,15 +107,18 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
       },
-      token, 
+      token,
     });
-
   } catch (err) {
-    
     console.error(err);
     return res.status(500).json({
       success: false,
       msg: "Failed to login. Please try again.",
     });
   }
+};
+
+module.exports = {
+  signup,
+  login,
 };
