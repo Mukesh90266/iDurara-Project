@@ -9,8 +9,9 @@ dotenv.config();
 
 // routes
 const userRouter = require("./src/routes/user");
+const companyRouter = require("./src/routes/company");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 30100;
 
 //connect db
 database.connect();
@@ -21,6 +22,7 @@ app.use(cookieParser());
 
 //routes
 app.use("/api/v1/auth", userRouter);
+app.use("/api/v1/company", companyRouter);
 
 app.get("/", (req, res) => {
   res.json({
