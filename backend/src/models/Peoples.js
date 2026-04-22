@@ -12,7 +12,7 @@ const peoplesSchema = new mongoose.Schema({
     trim: true,
   },
   company: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "companiese",
     required: false,
   },
@@ -21,12 +21,13 @@ const peoplesSchema = new mongoose.Schema({
     required: false,
   },
   phone: {
-    type: Number,
+    type: String,
     required: false,
   },
   email: {
     type: String,
     required: false,
+    unique:true
   },
 });
 

@@ -10,6 +10,7 @@ dotenv.config();
 // routes
 const userRouter = require("./src/routes/user");
 const companyRouter = require("./src/routes/company");
+const peoplesRouter = require("./src/routes/peoples")
 
 const PORT = process.env.PORT || 30100;
 
@@ -23,6 +24,7 @@ app.use(cookieParser());
 //routes
 app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/company", companyRouter);
+app.use("/api/v1/peoples",peoplesRouter)
 
 app.get("/", (req, res) => {
   res.json({
